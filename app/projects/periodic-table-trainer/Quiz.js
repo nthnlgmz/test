@@ -23,6 +23,16 @@ function describe(el, ask) {
   return [`What is the ATOMIC NUMBER (Z) of ${el.name} (${el.symbol})?`, "Type a number", "e.g., 11"];
 }
 
+const PAGE = "/projects/periodic-table-trainer";
+function shareText(score, total) {
+  const r = score / total;
+  const line =
+    r === 1 ? `Perfect score: ${score}/${total} on the Periodic Table Quiz Trainer 🧪`
+    : r >= 0.5 ? `I scored ${score}/${total} on the Periodic Table Quiz Trainer 🧪`
+    : `I got ${score}/${total} on the Periodic Table Quiz Trainer 😅`;
+  return `${line} Come study the periodic table with me and see if you can beat my score!`;
+}
+
 export default function Quiz() {
   const [set, setSet] = useState([]);        // picked after mount, so server and browser HTML match
   const [count, setCount] = useState(6);
@@ -31,6 +41,7 @@ export default function Quiz() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(null);
   const [value, setValue] = useState("");
+  const [shared, setShared] = useState("");
   const inputRef = useRef(null);
   const modalRef = useRef(null);
   const timer = useRef(null);
@@ -74,6 +85,7 @@ export default function Quiz() {
     const order = shuffled(set.map((_, i) => i));   // questions come in a random order, not card order
     setQ({ order, total: order.length, ptr: 0, score: 0, answered: 0, cur: { el: set[order[0]], ask: nextAsk(kinds) }, fb: null, locked: false, done: false });
     setValue("");
+    setShared("");
     setOpen(true);
   }
   function close() { clearTimeout(timer.current); setOpen(false); }
@@ -105,8 +117,24 @@ export default function Quiz() {
     setValue("");
   }
 
+  async function share() {
+    const url = location.origin + PAGE;
+    const text = shareText(q.score, q.total);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Periodic Table Quiz Trainer", text, url });
+      } else {
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        setShared("Copied! Paste it anywhere to challenge a friend.");
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") return;   // they closed the share sheet
+      setShared("Couldn’t share from here. Copy the link from your browser instead.");
+    }
+  }
+
   function onKey(e) {
-    if (e.key === "Enter") { e.preventDefault(); check(); }
+    if (e.key === "Enter" && e.target.tagName !== "BUTTON") { e.preventDefault(); check(); }
     if (e.key === "Escape") { e.preventDefault(); close(); }
   }
 
@@ -206,11 +234,18 @@ export default function Quiz() {
                   </div>
                 </>
               )}
+              {q.done && (
+                <div className={s.shareRow}>
+                  <p className={s.muted}>Invite a friend to study the periodic table with you.</p>
+                  <button className={`${s.btn} ${s.share}`} type="button" onClick={share}>Share my score</button>
+                  <p className={s.muted} role="status">{shared}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
     </>
   );
-              }
+                }
         
