@@ -1,4 +1,10 @@
+import { Unbounded, Archivo, Anton, Outfit } from "next/font/google";
 import "./globals.css";
+
+const unbounded = Unbounded({ subsets: ["latin"], weight: ["500", "700"], display: "swap", variable: "--font-unbounded" });
+const archivo = Archivo({ subsets: ["latin"], weight: ["800"], display: "swap", variable: "--font-archivo" });
+const anton = Anton({ subsets: ["latin"], weight: ["400"], display: "swap", variable: "--font-anton" });
+const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "500"], display: "swap", variable: "--font-outfit" });
 
 const title = "Nathaniel Gomez | Mechatronics Engineer, Batangas";
 const description = "Smart systems that solve everyday problems: ESP32 hardware, client websites, and PLC and process work.";
@@ -21,15 +27,9 @@ export const viewport = { themeColor: "#1a1716", viewportFit: "cover" };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${unbounded.variable} ${archivo.variable} ${anton.variable} ${outfit.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Archivo:wght@800&family=Anton&family=Outfit:wght@300;400;500&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body>{children}</body>
     </html>
