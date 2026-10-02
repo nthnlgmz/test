@@ -37,7 +37,7 @@ export default function Effects() {
     let hv = true, cv = false;
     const upd = () => cta.classList.toggle("show", !hv && !cv);
     const rv = [...document.querySelectorAll(
-      "main .wrap>h2,main .intro,main .tag2,main .chips.tools,main .edu,main .plist article,main .rev,main .revcta,main .contact .btns,main .contact address,main .soc"
+      "main .wrap>h2,main .intro,main .tag2,main .chips.tools,main .edu,main .plist article,main .slider,main .revcta,main .contact .btns,main .contact address,main .soc"
     )];
     rv.forEach((e) => e.classList.add("rv"));
 
