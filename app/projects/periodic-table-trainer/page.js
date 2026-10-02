@@ -35,14 +35,14 @@ const preview = [26, 11, 79].map((z) => ELEMENTS[z - 1]); // Fe, Na, Au
 const tilt = [-3, 2, -2];
 
 const steps = [
-  ["Pick and shuffle", "Choose 6, 12, 18, or 24 random elements. Each card shows the symbol, name, atomic number, and category."],
+  ["Pick and shuffle", "Choose 6, 12, 18, or 24 elements, and optionally a category like noble gases or halogens. Each card shows the symbol, name, atomic number, and category."],
   ["Choose your quiz", "Quiz yourself on symbols, names, atomic numbers, or any mix. Type your answer and see right away if it was correct."],
   ["Skip and come back", "Stuck on one? Skip it. It moves to the back of the line, so you still answer every question."],
 ];
 
 const features = [
   ["118 elements", "The full table, from hydrogen to oganesson.", "#ffd93d"],
-  ["Your set, your quiz", "Choose how many elements to study and which kinds of questions to get, in a random order.", "#b6f04c"],
+  ["Your set, your quiz", "Choose how many elements, which categories, and which kinds of questions. Shuffle without repeats until you have seen all 118.", "#b6f04c"],
   ["Colors that teach", "Every card is colored by its category, so you start to see how the table is organized.", "#4dd4f0"],
   ["Built for phones", "Big buttons and a full-screen quiz, so it works well on a small screen. No sign-up needed.", "#ff6b9d"],
 ];
@@ -147,3 +147,4 @@ export default function Landing() {
     </div>
   );
               }
+              
