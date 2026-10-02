@@ -35,7 +35,6 @@ const person = {
   email: "mailto:" + EMAIL,
   address: { "@type": "PostalAddress", addressRegion: "Batangas", addressCountry: "PH" },
   alumniOf: { "@type": "CollegeOrUniversity", name: "Batangas State University, The National Engineering University" },
-  worksFor: { "@type": "Organization", name: "Golden Bay Grain Terminal" },
   knowsAbout: ["Mechatronics", "ESP32", "Arduino", "PLC", "Web development", "Process control", "Occupational safety"],
   sameAs: socials.map((s) => s[1]),
 };
@@ -200,4 +199,5 @@ export default async function Home() {
       <a className="btn p fab sticky-cta" id="cta" href={CALL} {...ext} aria-label="Let’s talk: book a call (opens in new tab)">Let’s talk →</a>
     </>
   );
-}
+  }
+  
