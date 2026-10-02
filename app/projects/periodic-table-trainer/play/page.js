@@ -12,6 +12,9 @@ export const metadata = {
   alternates: { canonical: home + "/play" },
 };
 
+// Android Chrome: shrink the page when the keyboard opens, so the quiz stays fully visible above it.
+export const viewport = { interactiveWidget: "resizes-content" };
+
 export default function Play() {
   return (
     <div className={`${font.variable} ${s.root}`}>
