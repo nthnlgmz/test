@@ -34,8 +34,24 @@ export default function Quiz() {
   const inputRef = useRef(null);
   const modalRef = useRef(null);
   const timer = useRef(null);
+  const controlsRef = useRef(null);
+  const [showBar, setShowBar] = useState(false);   // true when the top Shuffle / Start buttons are off-screen
 
   useEffect(() => { setSet(pick(6)); }, []);
+
+  useEffect(() => {
+    const el = controlsRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setShowBar(!e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const dock = showBar && !open;
+  useEffect(() => {
+    if (!dock) return;
+    document.body.style.paddingBottom = "84px";   // keeps the footer clear of the bar
+    return () => { document.body.style.paddingBottom = ""; };
+  }, [dock]);
   useEffect(() => () => clearTimeout(timer.current), []);
 
   useEffect(() => {
@@ -112,7 +128,7 @@ export default function Quiz() {
               Each card shows the element’s category, with its own colour.
             </p>
           </div>
-          <div className={s.controls}>
+          <div className={s.controls} ref={controlsRef}>
             <button className={s.btn} type="button" onClick={() => shuffle()} title="Pick a new set">Shuffle</button>
             <button className={`${s.btn} ${s.go}`} type="button" onClick={start} disabled={!set.length}>Start quiz</button>
           </div>
@@ -152,6 +168,13 @@ export default function Quiz() {
         </div>
       </main>
 
+      {dock && (
+        <div className={s.dock} role="toolbar" aria-label="Quiz actions">
+          <button className={s.btn} type="button" onClick={() => shuffle()}>Shuffle</button>
+          <button className={`${s.btn} ${s.go}`} type="button" onClick={start} disabled={!set.length}>Start quiz</button>
+        </div>
+      )}
+
       {open && q && (
         <div className={s.overlay}>
           <div className={s.modal} role="dialog" aria-modal="true" aria-label="Quiz" tabIndex={-1} ref={modalRef} onKeyDown={onKey}>
@@ -189,5 +212,5 @@ export default function Quiz() {
       )}
     </>
   );
-    }
-                                            
+              }
+        
