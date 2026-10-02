@@ -17,14 +17,15 @@ const projects = [
 ];
 
 const jobs = [
-  { n: "01", title: "PLC operator", org: "Golden Bay Grain Terminal, FRCS.", from: ["2026-02", "Feb 2026"] },
-  { n: "02", title: "process specialist", org: "Monde Nissin Corporation, Malvar Plant.", from: ["2024-11", "Nov 2024"], to: ["2025-08", "Aug 2025"] },
+  { n: "01", title: "PLC Operator", org: "Golden Bay Grain Terminal Corporation", from: ["2026-02", "Feb 2026"], to: ["2026-09", "Sep 2026"] },
+  { n: "02", title: "Process Specialist", org: "Monde Nissin Corporation (Malvar Plant)", from: ["2024-11", "Nov 2024"], to: ["2025-08", "Aug 2025"] },
 ];
 
 const socials = [
   ["LinkedIn", "https://www.linkedin.com/in/nthnlgmz"],
   ["GitHub", "https://github.com/nthnlgmz"],
   ["Facebook", "https://www.facebook.com/share/1BPn3HZHZ2/"],
+  ["Telegram", "https://t.me/nthnlgmz"],
 ];
 
 const jsonLd = {
