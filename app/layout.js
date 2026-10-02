@@ -11,6 +11,7 @@ const description = "Smart systems that solve everyday problems: ESP32 hardware,
 const url = "https://engrnathanielgomez.vercel.app/";
 
 export const metadata = {
+  metadataBase: new URL(url),
   title,
   description: "Nathaniel Gomez is a mechatronics engineer in Batangas, Philippines. See his ESP32 hardware builds, client websites, and PLC and process experience.",
   authors: [{ name: "Nathaniel Gomez" }],
