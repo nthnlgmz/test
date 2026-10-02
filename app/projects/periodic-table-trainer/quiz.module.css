@@ -1,0 +1,71 @@
+.root{
+  --ink:#111; --paper:#f4f4f1; --white:#fff;
+  --yellow:#ffd93d; --lime:#b6f04c; --pink:#ff6b9d; --blue:#2f5bff;
+  display:flex; flex-direction:column; min-height:100vh; color:var(--ink);
+  font:500 16px/1.5 var(--qf),system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background-color:var(--paper);
+  background-image:linear-gradient(#1111110d 1px,transparent 1px),linear-gradient(90deg,#1111110d 1px,transparent 1px);
+  background-size:32px 32px;
+}
+.root :focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.container{width:100%;max-width:1000px;margin:0 auto;padding:36px 20px 28px;flex:1}
+.header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:22px}
+.title{
+  display:inline-block;margin:0;padding:12px 16px;background:var(--white);
+  border:4px solid var(--ink);box-shadow:8px 8px 0 var(--ink);transform:rotate(-1deg);
+  font:800 clamp(30px,8vw,56px)/1 var(--qf),system-ui,sans-serif;letter-spacing:-.03em;text-transform:none;
+}
+.subtitle{margin:22px 0 0;max-width:56ch}
+.controls{display:flex;flex-wrap:wrap;gap:12px}
+
+.btn{
+  font:800 16px/1 var(--qf),system-ui,sans-serif;color:var(--ink);background:var(--white);cursor:pointer;
+  padding:14px 20px;border:3px solid var(--ink);border-radius:0;box-shadow:4px 4px 0 var(--ink);touch-action:manipulation;
+}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+.btn:disabled{opacity:.5;cursor:default}
+.go{background:var(--lime)}
+.small{padding:10px 14px;font-size:14px}
+
+.deck{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:36px 4px 10px 0;min-height:200px}
+@media(min-width:560px){.deck{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:980px){.deck{grid-template-columns:repeat(6,1fr)}}
+.quizOpen .deck{visibility:hidden}
+.card{
+  background:var(--c);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);
+  min-height:170px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;
+}
+.num{align-self:flex-start;background:var(--white);border:2px solid var(--ink);padding:0 8px;font-weight:800;font-size:14px}
+.symbol{font-size:clamp(44px,12vw,60px);font-weight:800;line-height:1;letter-spacing:-.03em}
+.name{font-size:18px;font-weight:800;line-height:1.1}
+.cat{align-self:flex-start;background:var(--white);border:2px solid var(--ink);padding:2px 8px;font-size:12px;font-weight:800}
+@keyframes slam{from{opacity:0;transform:translate(8px,8px);box-shadow:0 0 0 var(--ink)}}
+@media(prefers-reduced-motion:no-preference){
+  .card{animation:slam .35s calc(var(--i)*70ms) cubic-bezier(.2,.9,.3,1.2) both}
+}
+
+.footer{background:var(--ink);color:#e5e5e5;font-size:13px;text-align:center;padding:16px 12px}
+.link{color:var(--yellow);font-weight:800}
+
+.overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;overflow:auto;padding:16px;background:rgba(17,17,17,.92)}
+.modal{width:min(640px,100%);background:var(--white);border:4px solid var(--ink);box-shadow:10px 10px 0 var(--yellow)}
+.modal:focus{outline:none}
+.mh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;background:var(--yellow);border-bottom:4px solid var(--ink)}
+.mtitle{margin:0;font:800 24px/1.1 var(--qf),system-ui,sans-serif;letter-spacing:-.02em;text-transform:none}
+.mb{padding:16px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 16px}
+.pill{display:inline-block;background:var(--white);border:3px solid var(--ink);padding:4px 10px;font-size:14px;font-weight:800}
+.lime,.good{background:var(--lime)}
+.bad{background:var(--pink)}
+.feedback{margin-top:16px}
+.question{margin:0;font-size:clamp(22px,5.6vw,30px);font-weight:800;line-height:1.15;letter-spacing:-.02em}
+.muted{margin:6px 0 0}
+.field{margin-top:16px}
+.input{
+  width:100%;padding:14px;font:800 20px/1.2 var(--qf),system-ui,sans-serif;color:var(--ink);background:var(--white);
+  border:3px solid var(--ink);border-radius:0;box-shadow:4px 4px 0 var(--ink);
+}
+.input::placeholder{color:#777;font-weight:500}
+.input:focus{outline:none;background:#fff6b8;box-shadow:6px 6px 0 var(--blue)}
+.actions{display:flex;gap:12px;justify-content:flex-end;margin-top:18px}
+.sr{position:absolute;left:-9999px}
