@@ -13,7 +13,7 @@ const tools = ["C++", "Arduino", "ESP32", "PLC", "HTML", "CSS", "JavaScript", "P
 const projects = [
   { title: "Anilao Diving & Photography", desc: "A diving website for a client, live and drawing more visitors.", chips: ["HTML", "CSS", "JS"], href: "https://www.anilaodivingandphotography.com/", go: "Visit site ↗", label: "Anilao Diving & Photography: visit site (opens in new tab)" },
   { title: "AutoPour Pub", desc: "A bartender in a box. Press the buttons, and the code mixes your chosen drink using the hardware inside.", chips: ["C++", "ESP32"] },
-  { title: "Periodic Table Quiz Trainer", desc: "An interactive quiz app that helps learners memorize the periodic table.", chips: ["HTML", "CSS", "JS"], href: "https://sites.google.com/view/learnperiodictable/home", go: "Visit ↗", label: "Periodic Table Quiz Trainer: visit (opens in new tab)" },
+  { title: "Periodic Table Quiz Trainer", desc: "An interactive quiz app that helps learners memorize the periodic table.", chips: ["HTML", "CSS", "JS"], href: "https://engrnathanielgomez.vercel.app/projects/periodic-table-trainer", go: "Visit ↗", label: "Periodic Table Quiz Trainer: visit (opens in new tab)" },
 ];
 
 const jobs = [
