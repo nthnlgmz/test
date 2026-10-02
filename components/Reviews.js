@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const empty = { name: "", role: "", msg: "", website: "" };
 
@@ -13,19 +14,35 @@ export default function Reviews({ initial = [] }) {
   const [list, setList] = useState(initial);
   const [idx, setIdx] = useState(0);
   const [open, setOpen] = useState(false);
-  const [note, setNote] = useState("");
+  const [done, setDone] = useState(null); // null | "live" | "pending"
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [f, setF] = useState(empty);
-  const nameRef = useRef(null);
   const trackRef = useRef(null);
+  const btnRef = useRef(null);
+  const dialogRef = useRef(null);
 
   const slides = [first, ...list];
   const reduce = () => matchMedia("(prefers-reduced-motion:reduce)").matches;
 
+  const openForm = () => { setDone(null); setErr(""); setOpen(true); };
+  const close = () => { setOpen(false); setErr(""); };
+
+  // While the form is open: lock the page behind it, close on Esc, restore focus after.
   useEffect(() => {
-    document.body.classList.toggle("form-open", open);
-    if (open) { setNote(""); nameRef.current?.focus(); }
+    if (!open) return;
+    const html = document.documentElement;
+    html.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    dialogRef.current?.focus();
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    addEventListener("keydown", onKey);
+    return () => {
+      html.style.overflow = "";
+      document.body.style.overflow = "";
+      removeEventListener("keydown", onKey);
+      btnRef.current?.focus({ preventScroll: true });
+    };
   }, [open]);
 
   const go = (dir) => {
@@ -50,19 +67,52 @@ export default function Reviews({ initial = [] }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(f),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Something went wrong.");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Could not send your review. Please try again.");
       if (data.approved) {
         setList([...list, { name: f.name.trim(), role: f.role.trim(), msg: f.msg.trim() }]);
-        setTimeout(() => trackRef.current?.scrollTo({ left: trackRef.current.scrollWidth, behavior: reduce() ? "auto" : "smooth" }), 50);
+        setTimeout(() => trackRef.current?.scrollTo({ left: trackRef.current.scrollWidth, behavior: "auto" }), 50);
       }
-      setNote(data.approved ? "Thanks. Your review is now on the page." : "Thanks. Your review will appear once it’s approved.");
-      setF(empty); setOpen(false);
+      setDone(data.approved ? "live" : "pending");
+      setF(empty);
     } catch (x) {
       setErr(x.message);
     }
     setBusy(false);
   }
+
+  const modal = (
+    <div className="modal" role="dialog" aria-modal="true" aria-labelledby="mh" tabIndex={-1} ref={dialogRef}>
+      <button className="m-x" type="button" onClick={close} aria-label="Close">×</button>
+      <div className="m-in">
+        {done ? (
+          <div className="m-done">
+            <h2 id="mh">thanks.<span>{done === "live" ? "your review is live." : "it’ll appear once approved."}</span></h2>
+            <p>{done === "live" ? "Your words are now in the slider." : "I read every review before it goes on the page."}</p>
+            <button className="btn p" type="button" onClick={close}>Close</button>
+          </div>
+        ) : (
+          <>
+            <h2 id="mh">worked with me?<span>add your words here.</span></h2>
+            <form id="revform" aria-label="Write a review" onSubmit={submit} noValidate>
+              <label className="sr" htmlFor="rn">Your name</label>
+              <input id="rn" placeholder="Your name" maxLength={40} autoComplete="name" value={f.name} onChange={on("name")} aria-describedby="ferr" />
+              <label className="sr" htmlFor="rr">Role or company (optional)</label>
+              <input id="rr" placeholder="Role or company (optional)" maxLength={50} autoComplete="organization-title" value={f.role} onChange={on("role")} />
+              <label className="sr" htmlFor="rm">Your review</label>
+              <textarea id="rm" placeholder="Write your review" maxLength={300} rows={4} value={f.msg} onChange={on("msg")} aria-describedby="ferr" />
+              <input className="sr" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={f.website} onChange={on("website")} />
+              <div className="frow">
+                <button className="btn p" type="submit" disabled={busy}>{busy ? "Sending…" : "Post review"}</button>
+                <button className="btn" type="button" onClick={close}>Cancel</button>
+              </div>
+              <p className="ferr" id="ferr" role="alert">{err}</p>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -85,28 +135,14 @@ export default function Reviews({ initial = [] }) {
       </div>
 
       <div className="revcta">
-        {!open && <p id="revhead">worked with me?<br />add your words here.</p>}
-        {!open && (
-          <button className="btn p" id="revbtn" type="button" aria-expanded="false" aria-controls="revform" onClick={() => setOpen(true)}>
-            Write a review →
-          </button>
-        )}
-        <form id="revform" aria-label="Write a review" hidden={!open} onSubmit={submit} noValidate>
-          <label className="sr" htmlFor="rn">Your name</label>
-          <input id="rn" ref={nameRef} placeholder="Your name" maxLength={40} autoComplete="name" value={f.name} onChange={on("name")} aria-describedby="ferr" />
-          <label className="sr" htmlFor="rr">Role or company (optional)</label>
-          <input id="rr" placeholder="Role or company (optional)" maxLength={50} autoComplete="organization-title" value={f.role} onChange={on("role")} />
-          <label className="sr" htmlFor="rm">Your review</label>
-          <textarea id="rm" placeholder="Write your review" maxLength={300} rows={4} value={f.msg} onChange={on("msg")} aria-describedby="ferr" />
-          <input className="sr" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={f.website} onChange={on("website")} />
-          <div className="frow">
-            <button className="btn p" type="submit" disabled={busy}>{busy ? "Posting…" : "Post review"}</button>
-            <button className="btn" type="button" onClick={() => { setOpen(false); setErr(""); }}>Cancel</button>
-          </div>
-          <p className="ferr" id="ferr" role="alert">{err}</p>
-        </form>
-        <p className="thanks" id="thanks" aria-live="polite" hidden={!note}>{note}</p>
+        <p id="revhead">worked with me?<br />add your words here.</p>
+        <button className="btn p" id="revbtn" type="button" ref={btnRef} aria-haspopup="dialog" onClick={openForm}>
+          Write a review →
+        </button>
       </div>
+
+      {open && createPortal(modal, document.body)}
     </>
   );
-}
+                                                                                                                    }
+                                                                                                                    
