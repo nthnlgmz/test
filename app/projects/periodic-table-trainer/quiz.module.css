@@ -95,3 +95,11 @@
 .shareRow{margin-top:14px;display:flex;flex-direction:column;gap:10px}
 .shareRow .btn{width:100%}
 .share{background:var(--yellow)}
+
+/* category filter + no-repeat deck */
+.groupWide{flex:1 1 100%}
+.catopt{border-left:10px solid var(--c)}
+.catopt.on{background:var(--c)}
+.status{margin:16px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-weight:800}
+.notice{background:var(--lime);border:3px solid var(--ink);padding:2px 8px;font-size:14px}
+.reset{font:800 14px/1.2 var(--qf),system-ui,sans-serif;color:var(--ink);background:none;border:0;border-bottom:3px solid var(--ink);padding:0;cursor:pointer}
