@@ -25,7 +25,6 @@ const socials = [
   ["LinkedIn", "https://www.linkedin.com/in/nthnlgmz"],
   ["GitHub", "https://github.com/nthnlgmz"],
   ["Facebook", "https://www.facebook.com/share/1BPn3HZHZ2/"],
-  ["Telegram", "https://t.me/nthnlgmz"],
 ];
 
 const jsonLd = {
