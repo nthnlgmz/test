@@ -6,10 +6,15 @@ import s from "../quiz.module.css";
 const font = Bricolage_Grotesque({ subsets: ["latin"], variable: "--qf", display: "swap" });
 const home = "/projects/periodic-table-trainer";
 
+const title = "Play — Periodic Table Quiz Trainer";
+const description = "Shuffle a set of elements, then get quizzed on element symbols, names, and atomic numbers.";
+
 export const metadata = {
-  title: "Play — Periodic Table Quiz Trainer",
-  description: "Six random elements, then a short quiz on element symbols, names, and atomic numbers.",
+  title,
+  description,
   alternates: { canonical: home + "/play" },
+  openGraph: { type: "website", siteName: "Nathaniel Gomez", title, description, url: home + "/play", locale: "en_PH" },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 // Android Chrome: shrink the page when the keyboard opens, so the quiz stays fully visible above it.
