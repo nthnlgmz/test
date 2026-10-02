@@ -8,7 +8,7 @@ const path = "/projects/periodic-table-trainer";
 const title = "Periodic Table Quiz Trainer — Learn Element Symbols, Names & Atomic Numbers";
 const description =
   "Interactive periodic table trainer: practice element symbols, names, and atomic numbers with a smart skip-and-answer-later quiz. Cards also show each element’s category/metal type for learning.";
-
+ 
 export const metadata = {
   title,
   description,
