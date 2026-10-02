@@ -90,3 +90,8 @@
 @media(min-width:700px){.dock{justify-content:center}.dock .btn{flex:0 1 220px}}
 @keyframes dockIn{from{transform:translateY(100%)}}
 @media(prefers-reduced-motion:no-preference){.dock{animation:dockIn .2s ease-out}}
+
+/* share (end of quiz) */
+.shareRow{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+.shareRow .btn{width:100%}
+.share{background:var(--yellow)}
