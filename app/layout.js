@@ -8,7 +8,7 @@ const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "500"], displ
 
 const title = "Nathaniel Gomez | Mechatronics Engineer, Batangas";
 const description = "Smart systems that solve everyday problems: ESP32 hardware, client websites, and PLC and process work.";
-const url = "https://nthnlgmz.github.io/portfolio/";
+const url = "https://engrnathanielgomez.vercel.app/";
 
 export const metadata = {
   title,
