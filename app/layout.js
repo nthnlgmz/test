@@ -16,11 +16,8 @@ export const metadata = {
   authors: [{ name: "Nathaniel Gomez" }],
   robots: { index: true, follow: true, "max-image-preview": "large" },
   alternates: { canonical: url },
-  icons: {
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a1716'/%3E%3Ccircle cx='32' cy='32' r='11' fill='%23a90000'/%3E%3C/svg%3E",
-  },
   openGraph: { type: "website", siteName: "Nathaniel Gomez", title, description, url, locale: "en_PH" },
-  twitter: { card: "summary", title, description },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 export const viewport = { themeColor: "#1a1716", viewportFit: "cover" };
