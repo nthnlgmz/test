@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Effects from "../components/Effects";
 import Reviews from "../components/Reviews";
 import { getReviews } from "../lib/reviews";
@@ -13,7 +14,7 @@ const tools = ["C++", "Arduino", "ESP32", "PLC", "HTML", "CSS", "JavaScript", "P
 const projects = [
   { title: "Anilao Diving & Photography", desc: "A diving website for a client, live and drawing more visitors.", chips: ["HTML", "CSS", "JS"], href: "https://www.anilaodivingandphotography.com/", go: "Visit site ↗", label: "Anilao Diving & Photography: visit site (opens in new tab)" },
   { title: "AutoPour Pub", desc: "A bartender in a box. Press the buttons, and the code mixes your chosen drink using the hardware inside.", chips: ["C++", "ESP32"] },
-  { title: "Periodic Table Quiz Trainer", desc: "An interactive quiz app that helps learners memorize the periodic table.", chips: ["HTML", "CSS", "JS"], href: "https://engrnathanielgomez.vercel.app/projects/periodic-table-trainer", go: "Visit ↗", label: "Periodic Table Quiz Trainer: visit (opens in new tab)" },
+  { title: "Periodic Table Quiz Trainer", desc: "An interactive quiz app that helps learners memorize the periodic table.", chips: ["HTML", "CSS", "JS"], href: "/projects/periodic-table-trainer", internal: true, go: "Try it →", label: "Periodic Table Quiz Trainer: try it" },
 ];
 
 const jobs = [
@@ -118,7 +119,11 @@ export default async function Home() {
               {projects.map((p) =>
                 p.href ? (
                   <article key={p.title}>
-                    <a className="proj" href={p.href} {...ext} aria-label={p.label}><ProjectBody p={p} /></a>
+                    {p.internal ? (
+                      <Link className="proj" href={p.href} aria-label={p.label}><ProjectBody p={p} /></Link>
+                    ) : (
+                      <a className="proj" href={p.href} {...ext} aria-label={p.label}><ProjectBody p={p} /></a>
+                    )}
                   </article>
                 ) : (
                   <article className="proj" key={p.title}><ProjectBody p={p} /></article>
