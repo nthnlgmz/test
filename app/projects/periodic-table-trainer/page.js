@@ -35,14 +35,14 @@ const preview = [26, 11, 79].map((z) => ELEMENTS[z - 1]); // Fe, Na, Au
 const tilt = [-3, 2, -2];
 
 const steps = [
-  ["Meet six elements", "Each round shows six random elements with their symbol, name, atomic number, and category."],
-  ["Get quizzed", "A short quiz asks for a symbol, a name, or an atomic number. Type your answer and see right away if it was correct."],
+  ["Pick and shuffle", "Choose 6, 12, 18, or 24 random elements. Each card shows the symbol, name, atomic number, and category."],
+  ["Choose your quiz", "Quiz yourself on symbols, names, atomic numbers, or any mix. Type your answer and see right away if it was correct."],
   ["Skip and come back", "Stuck on one? Skip it. It moves to the back of the line, so you still answer every question."],
 ];
 
 const features = [
   ["118 elements", "The full table, from hydrogen to oganesson.", "#ffd93d"],
-  ["Three kinds of questions", "Symbol, element name, or atomic number, picked at random.", "#b6f04c"],
+  ["Your set, your quiz", "Choose how many elements to study and which kinds of questions to get, in a random order.", "#b6f04c"],
   ["Colors that teach", "Every card is colored by its category, so you start to see how the table is organized.", "#4dd4f0"],
   ["Built for phones", "Big buttons and a full-screen quiz, so it works well on a small screen. No sign-up needed.", "#ff6b9d"],
 ];
@@ -65,9 +65,9 @@ export default function Landing() {
         <section className={`${l.wrap} ${l.hero}`} aria-labelledby="h-hero">
           <div>
             <span className={l.tag}>A web app for learning the periodic table</span>
-            <h1 id="h-hero" className={l.headline}>Study six elements. Then get quizzed on them.</h1>
+            <h1 id="h-hero" className={l.headline}>Pick your elements. Then get quizzed on them.</h1>
             <p className={l.lead}>
-              Memorize element symbols, names, and atomic numbers one small set at a time, with a quick quiz after every round.
+              Choose how many elements to study, then quiz yourself on their symbols, names, or atomic numbers.
             </p>
             <div className={l.ctas}>
               <Link className={`${l.btn} ${l.go} ${l.big}`} href={play}>Start practicing →</Link>
@@ -82,7 +82,7 @@ export default function Landing() {
                 <article
                   key={el.symbol}
                   className={q.card}
-                  style={{ "--c": COLORS[cat], "--i": i, transform: `rotate(${tilt[i]}deg) translateY(${i === 1 ? 16 : 0}px)` }}
+                  style={{ "--c": COLORS[cat], "--i": i, "--r": `${tilt[i]}deg`, "--y": `${i === 1 ? 16 : 0}px` }}
                 >
                   <span className={q.num}>{el.Z}</span>
                   <div className={q.symbol}>{el.symbol}</div>
@@ -135,7 +135,7 @@ export default function Landing() {
 
         <section className={`${l.wrap} ${l.ctawrap}`} aria-labelledby="h-go">
           <div className={l.cta}>
-            <h2 id="h-go" className={l.h2}>Six elements. Six questions. Go.</h2>
+            <h2 id="h-go" className={l.h2}>Shuffle. Quiz. Repeat.</h2>
             <Link className={`${l.btn} ${l.go} ${l.big}`} href={play}>Start practicing →</Link>
           </div>
         </section>
@@ -146,4 +146,4 @@ export default function Landing() {
       </footer>
     </div>
   );
-}
+              }
