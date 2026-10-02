@@ -3,19 +3,39 @@ import { useEffect, useRef, useState } from "react";
 
 const empty = { name: "", role: "", msg: "", website: "" };
 
+const first = {
+  name: "Rene Camacho",
+  role: "Client",
+  msg: "Professional, attentive to detail, and brought the vision to life. The site looks fantastic and runs smoothly, and it’s already attracting more visitors.",
+};
+
 export default function Reviews({ initial = [] }) {
   const [list, setList] = useState(initial);
+  const [idx, setIdx] = useState(0);
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState("");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [f, setF] = useState(empty);
   const nameRef = useRef(null);
+  const trackRef = useRef(null);
+
+  const slides = [first, ...list];
+  const reduce = () => matchMedia("(prefers-reduced-motion:reduce)").matches;
 
   useEffect(() => {
     document.body.classList.toggle("form-open", open);
     if (open) { setNote(""); nameRef.current?.focus(); }
   }, [open]);
+
+  const go = (dir) => {
+    const t = trackRef.current;
+    if (t) t.scrollBy({ left: dir * t.clientWidth, behavior: reduce() ? "auto" : "smooth" });
+  };
+  const onScroll = (e) => {
+    const t = e.currentTarget;
+    setIdx(Math.round(t.scrollLeft / t.clientWidth));
+  };
 
   const on = (k) => (e) => setF({ ...f, [k]: e.target.value });
 
@@ -32,7 +52,10 @@ export default function Reviews({ initial = [] }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
-      if (data.approved) setList([...list, { name: f.name.trim(), role: f.role.trim(), msg: f.msg.trim() }]);
+      if (data.approved) {
+        setList([...list, { name: f.name.trim(), role: f.role.trim(), msg: f.msg.trim() }]);
+        setTimeout(() => trackRef.current?.scrollTo({ left: trackRef.current.scrollWidth, behavior: reduce() ? "auto" : "smooth" }), 50);
+      }
       setNote(data.approved ? "Thanks. Your review is now on the page." : "Thanks. Your review will appear once it’s approved.");
       setF(empty); setOpen(false);
     } catch (x) {
@@ -43,14 +66,24 @@ export default function Reviews({ initial = [] }) {
 
   return (
     <>
-      <div id="revlist">
-        {list.map((r, i) => (
-          <figure className="rev sm" key={r.id ?? i}>
-            <blockquote><p>{"\u201C" + r.msg + "\u201D"}</p></blockquote>
-            <figcaption>{r.name + (r.role ? ", " + r.role : "")}</figcaption>
-          </figure>
-        ))}
+      <div className="slider">
+        <div className="track" ref={trackRef} onScroll={onScroll} tabIndex={0} role="region" aria-label="Client reviews">
+          {slides.map((r, i) => (
+            <figure className="rev" key={r.id ?? i} role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`}>
+              <blockquote><p>{"\u201C" + r.msg + "\u201D"}</p></blockquote>
+              <figcaption>{r.name + (r.role ? ", " + r.role : "")}</figcaption>
+            </figure>
+          ))}
+        </div>
+        {slides.length > 1 && (
+          <div className="sl-ctl">
+            <button type="button" onClick={() => go(-1)} disabled={idx <= 0} aria-label="Previous review">←</button>
+            <span aria-live="polite">{idx + 1} / {slides.length}</span>
+            <button type="button" onClick={() => go(1)} disabled={idx >= slides.length - 1} aria-label="Next review">→</button>
+          </div>
+        )}
       </div>
+
       <div className="revcta">
         {!open && <p id="revhead">worked with me?<br />add your words here.</p>}
         {!open && (
@@ -76,4 +109,4 @@ export default function Reviews({ initial = [] }) {
       </div>
     </>
   );
-                                                                                                                                               }
+}
