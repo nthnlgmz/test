@@ -1,4 +1,5 @@
 import { Unbounded, Archivo, Anton, Outfit } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const unbounded = Unbounded({ subsets: ["latin"], weight: ["500", "700"], display: "swap", variable: "--font-unbounded" });
@@ -29,7 +30,7 @@ export default function RootLayout({ children }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>
-      <body>{children}</body>
+      <body>{children}<Analytics /></body>
     </html>
   );
 }
