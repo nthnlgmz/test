@@ -83,3 +83,10 @@
 .actions{display:flex;gap:12px;justify-content:flex-end;margin-top:14px}
 .mb .btn{padding:12px 18px}
 .sr{position:absolute;left:-9999px}
+
+/* sticky bottom bar: shows when the top Shuffle / Start buttons scroll out of view */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;gap:12px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:var(--white);border-top:4px solid var(--ink)}
+.dock .btn{flex:1;padding:14px 10px}
+@media(min-width:700px){.dock{justify-content:center}.dock .btn{flex:0 1 220px}}
+@keyframes dockIn{from{transform:translateY(100%)}}
+@media(prefers-reduced-motion:no-preference){.dock{animation:dockIn .2s ease-out}}
