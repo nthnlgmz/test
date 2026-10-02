@@ -12,7 +12,7 @@ const description = "Shuffle a set of elements, then get quizzed on element symb
 export const metadata = {
   title,
   description,
-  alternates: { canonical: home + "/play" },
+  robots: { index: false, follow: true },   // keep Google on the landing page; this is the app itself
   openGraph: { type: "website", siteName: "Nathaniel Gomez", title, description, url: home + "/play", locale: "en_PH" },
   twitter: { card: "summary_large_image", title, description },
 };
