@@ -3,13 +3,19 @@ import { useEffect, useRef, useState } from "react";
 import { ELEMENTS, COLORS, category } from "./elements";
 import s from "./quiz.module.css";
 
-const TOTAL = 6;
-const TYPES = ["symbol", "name", "number"];
-const nextAsk = () => TYPES[(Math.random() * TYPES.length) | 0];
-const pick = () => {
-  const pool = [...ELEMENTS];
-  return Array.from({ length: TOTAL }, () => pool.splice((Math.random() * pool.length) | 0, 1)[0]);
+const COUNTS = [6, 12, 18, 24];
+const KINDS = [["symbol", "Symbol"], ["name", "Name"], ["number", "Atomic number"]];
+
+const shuffled = (arr) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = (Math.random() * (i + 1)) | 0;
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 };
+const pick = (n) => shuffled(ELEMENTS).slice(0, n);
+const nextAsk = (kinds) => kinds[(Math.random() * kinds.length) | 0];
 
 function describe(el, ask) {
   if (ask === "symbol") return [`What is the SYMBOL for ${el.name}?`, `Atomic No. ${el.Z}`, "e.g., Na"];
@@ -19,6 +25,8 @@ function describe(el, ask) {
 
 export default function Quiz() {
   const [set, setSet] = useState([]);        // picked after mount, so server and browser HTML match
+  const [count, setCount] = useState(6);
+  const [kinds, setKinds] = useState(["symbol", "name", "number"]);
   const [shuffles, setShuffles] = useState(0);
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(null);
@@ -26,18 +34,9 @@ export default function Quiz() {
   const inputRef = useRef(null);
   const modalRef = useRef(null);
   const timer = useRef(null);
-  const shuffleSound = useRef(null);
 
-  useEffect(() => { setSet(pick()); }, []);
+  useEffect(() => { setSet(pick(6)); }, []);
   useEffect(() => () => clearTimeout(timer.current), []);
-
-  // preload the shuffle sound (file lives in /public/shuffle.mp3)
-  useEffect(() => {
-    const a = new Audio("/shuffle.mp3");
-    a.preload = "auto";
-    shuffleSound.current = a;
-    return () => { a.pause(); shuffleSound.current = null; };
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -49,18 +48,15 @@ export default function Quiz() {
     if (open && q) (q.done ? modalRef : inputRef).current?.focus();
   }, [open, q?.cur, q?.done]);
 
-  const playShuffle = () => {
-    const a = shuffleSound.current;
-    if (!a) return;
-    a.currentTime = 0;               // restart so rapid clicks still play
-    a.play().catch(() => {});        // ignore autoplay-block errors
-  };
-
-  const shuffle = () => { playShuffle(); setSet(pick()); setShuffles((n) => n + 1); };
+  const shuffle = (n = count) => { setSet(pick(n)); setShuffles((x) => x + 1); };
+  const changeCount = (n) => { setCount(n); shuffle(n); };
+  const toggleKind = (k) =>
+    setKinds((prev) => (prev.includes(k) ? (prev.length > 1 ? prev.filter((x) => x !== k) : prev) : [...prev, k]));
 
   function start() {
     clearTimeout(timer.current);
-    setQ({ order: set.map((_, i) => i), ptr: 0, score: 0, answered: 0, cur: { el: set[0], ask: nextAsk() }, fb: null, locked: false, done: false });
+    const order = shuffled(set.map((_, i) => i));   // questions come in a random order, not card order
+    setQ({ order, total: order.length, ptr: 0, score: 0, answered: 0, cur: { el: set[order[0]], ask: nextAsk(kinds) }, fb: null, locked: false, done: false });
     setValue("");
     setOpen(true);
   }
@@ -79,7 +75,7 @@ export default function Quiz() {
     });
     if (!last) {
       timer.current = setTimeout(() => {
-        setQ((p) => ({ ...p, cur: { el: set[p.order[p.ptr]], ask: nextAsk() }, fb: null, locked: false }));
+        setQ((p) => ({ ...p, cur: { el: set[p.order[p.ptr]], ask: nextAsk(kinds) }, fb: null, locked: false }));
         setValue("");
       }, 600);
     }
@@ -89,7 +85,7 @@ export default function Quiz() {
     if (!q || q.locked || q.done) return;
     const order = [...q.order, q.order[q.ptr]];   // send this question to the back of the line
     const ptr = q.ptr + 1;
-    setQ({ ...q, order, ptr, cur: { el: set[order[ptr]], ask: nextAsk() }, fb: null });
+    setQ({ ...q, order, ptr, cur: { el: set[order[ptr]], ask: nextAsk(kinds) }, fb: null });
     setValue("");
   }
 
@@ -100,9 +96,10 @@ export default function Quiz() {
 
   const [text, helper, placeholder] = q
     ? q.done
-      ? [`Quiz finished! Final score: ${q.score}/${TOTAL}`, "Close, then Shuffle 6 and Start quiz to try again.", ""]
+      ? [`Quiz finished! Final score: ${q.score}/${q.total}`, "Close, then Shuffle and Start quiz to try again.", ""]
       : describe(q.cur.el, q.cur.ask)
     : ["", "", ""];
+  const pill = q?.fb && <span className={`${s.pill} ${q.fb.ok ? s.good : s.bad}`} role="status">{q.fb.text}</span>;
 
   return (
     <>
@@ -111,15 +108,34 @@ export default function Quiz() {
           <div>
             <h1 className={s.title}>Periodic Table Quiz Trainer</h1>
             <p className={s.subtitle}>
-              Shows 6 random elements. The quiz asks for the symbol, the element name, or the atomic number.
-              Each card also shows the element’s category, with its own colour.
+              Pick how many elements to study, shuffle them, then get quizzed on symbols, names, or atomic numbers.
+              Each card shows the element’s category, with its own colour.
             </p>
           </div>
           <div className={s.controls}>
-            <button className={s.btn} type="button" onClick={shuffle} title="Pick a new set of 6">Shuffle 6</button>
+            <button className={s.btn} type="button" onClick={() => shuffle()} title="Pick a new set">Shuffle</button>
             <button className={`${s.btn} ${s.go}`} type="button" onClick={start} disabled={!set.length}>Start quiz</button>
           </div>
         </header>
+
+        <section className={s.settings} aria-label="Quiz settings">
+          <fieldset className={s.group}>
+            <legend className={s.legend}>Elements</legend>
+            <div className={s.opts}>
+              {COUNTS.map((n) => (
+                <button key={n} type="button" className={`${s.opt} ${count === n ? s.on : ""}`} aria-pressed={count === n} onClick={() => changeCount(n)}>{n}</button>
+              ))}
+            </div>
+          </fieldset>
+          <fieldset className={s.group}>
+            <legend className={s.legend}>Quiz me on</legend>
+            <div className={s.opts}>
+              {KINDS.map(([k, label]) => (
+                <button key={k} type="button" className={`${s.opt} ${kinds.includes(k) ? s.on : ""}`} aria-pressed={kinds.includes(k)} onClick={() => toggleKind(k)}>{label}</button>
+              ))}
+            </div>
+          </fieldset>
+        </section>
 
         <div className={s.deck} aria-live="polite">
           {set.map((el, i) => {
@@ -138,18 +154,19 @@ export default function Quiz() {
 
       {open && q && (
         <div className={s.overlay}>
-          <div className={s.modal} role="dialog" aria-modal="true" aria-labelledby="qt" tabIndex={-1} ref={modalRef} onKeyDown={onKey}>
+          <div className={s.modal} role="dialog" aria-modal="true" aria-label="Quiz" tabIndex={-1} ref={modalRef} onKeyDown={onKey}>
             <div className={s.mh}>
-              <h2 id="qt" className={s.mtitle}>Quiz time</h2>
+              <div className={s.stats}>
+                <span className={s.pill} aria-label={`${q.answered} of ${q.total} answered`}>{q.answered} / {q.total}</span>
+                <span className={`${s.pill} ${s.lime}`}>Score: {q.score}</span>
+              </div>
               <button className={`${s.btn} ${s.small}`} type="button" onClick={close}>Close</button>
             </div>
             <div className={s.mb}>
-              <div className={s.row}>
-                <span className={s.pill}>{q.answered} / {TOTAL} answered</span>
-                <span className={`${s.pill} ${s.lime}`}>Score: {q.score}</span>
-              </div>
               <p className={s.question}>{text}</p>
-              <p className={s.muted}>{helper}</p>
+              <div className={s.slot}>
+                {q.done ? <>{pill}<p className={s.muted}>{helper}</p></> : pill || <p className={s.muted}>{helper}</p>}
+              </div>
               {!q.done && (
                 <>
                   <div className={s.field}>
@@ -157,7 +174,7 @@ export default function Quiz() {
                     <input
                       id="answer" ref={inputRef} className={s.input} type="text" value={value}
                       onChange={(e) => setValue(e.target.value)} placeholder={placeholder}
-                      autoComplete="off" autoCapitalize="off" spellCheck={false}
+                      autoComplete="off" autoCapitalize="off" spellCheck={false} enterKeyHint="go"
                     />
                   </div>
                   <div className={s.actions}>
@@ -166,12 +183,11 @@ export default function Quiz() {
                   </div>
                 </>
               )}
-              {q.fb && <span className={`${s.pill} ${s.feedback} ${q.fb.ok ? s.good : s.bad}`} role="status">{q.fb.text}</span>}
             </div>
           </div>
         </div>
       )}
     </>
   );
-        }
-  
+    }
+                                            
