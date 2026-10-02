@@ -14,7 +14,25 @@ const shuffled = (arr) => {
   }
   return a;
 };
-const pick = (n) => shuffled(ELEMENTS).slice(0, n);
+const CATS = ["alkali metal", "alkaline earth metal", "transition metal", "post-transition metal", "metalloid", "nonmetal", "halogen", "noble gas", "lanthanoid", "actinoid"];
+const COUNT_BY_CAT = Object.fromEntries(CATS.map((c) => [c, ELEMENTS.filter((el) => category(el) === c).length]));
+const poolFor = (cats) => (cats.length ? ELEMENTS.filter((el) => cats.includes(category(el))) : ELEMENTS);
+
+// Deals n elements from a shuffled deck and remembers what is left, so nothing repeats until the whole pool has been seen.
+function drawDeck(pool, n, bag) {
+  let rest = bag ? bag.filter((el) => pool.includes(el)) : shuffled(pool);
+  let take = rest.slice(0, n);
+  rest = rest.slice(n);
+  let wrapped = false;
+  if (take.length < n) {                       // deck ran out: start a fresh one, skipping what is already in this set
+    wrapped = !!bag;
+    const fresh = shuffled(pool.filter((el) => !take.includes(el)));
+    const need = n - take.length;
+    take = [...take, ...fresh.slice(0, need)];
+    rest = fresh.slice(need);
+  }
+  return { set: take, bag: rest, wrapped };
+}
 const nextAsk = (kinds) => kinds[(Math.random() * kinds.length) | 0];
 
 function describe(el, ask) {
@@ -37,6 +55,10 @@ export default function Quiz() {
   const [set, setSet] = useState([]);        // picked after mount, so server and browser HTML match
   const [count, setCount] = useState(6);
   const [kinds, setKinds] = useState(["symbol", "name", "number"]);
+  const [cats, setCats] = useState([]);              // [] means every category
+  const [noRepeat, setNoRepeat] = useState(true);
+  const [bag, setBag] = useState(null);              // elements not yet dealt in this pass
+  const [notice, setNotice] = useState("");
   const [shuffles, setShuffles] = useState(0);
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(null);
@@ -48,7 +70,7 @@ export default function Quiz() {
   const controlsRef = useRef(null);
   const [showBar, setShowBar] = useState(false);   // true when the top Shuffle / Start buttons are off-screen
 
-  useEffect(() => { setSet(pick(6)); }, []);
+  useEffect(() => { deal(); }, []);
 
   useEffect(() => {
     const el = controlsRef.current;
@@ -75,8 +97,27 @@ export default function Quiz() {
     if (open && q) (q.done ? modalRef : inputRef).current?.focus();
   }, [open, q?.cur, q?.done]);
 
-  const shuffle = (n = count) => { setSet(pick(n)); setShuffles((x) => x + 1); };
-  const changeCount = (n) => { setCount(n); shuffle(n); };
+  function deal(o = {}) {
+    const c = o.cats ?? cats, n = o.count ?? count, nr = o.noRepeat ?? noRepeat;
+    const pool = poolFor(c);
+    const size = Math.min(n, pool.length);
+    let picked, nextBag = null, note = "";
+    if (nr && size < pool.length) {
+      const r = drawDeck(pool, size, o.reset ? null : bag);
+      picked = r.set; nextBag = r.bag;
+      if (r.wrapped) note = "You’ve seen every element. Fresh deck started.";
+    } else {
+      picked = shuffled(pool).slice(0, size);
+    }
+    setSet(picked); setBag(nextBag); setNotice(note); setShuffles((x) => x + 1);
+  }
+  const shuffle = () => deal();
+  const changeCount = (n) => { setCount(n); deal({ count: n }); };
+  const toggleCat = (c) => {
+    const next = c === "all" ? [] : cats.includes(c) ? cats.filter((x) => x !== c) : [...cats, c];
+    setCats(next); deal({ cats: next, reset: true });
+  };
+  const toggleRepeat = () => { setNoRepeat(!noRepeat); deal({ noRepeat: !noRepeat, reset: true }); };
   const toggleKind = (k) =>
     setKinds((prev) => (prev.includes(k) ? (prev.length > 1 ? prev.filter((x) => x !== k) : prev) : [...prev, k]));
 
@@ -138,6 +179,9 @@ export default function Quiz() {
     if (e.key === "Escape") { e.preventDefault(); close(); }
   }
 
+  const pool = poolFor(cats);
+  const seen = bag ? pool.length - bag.length : 0;
+
   const [text, helper, placeholder] = q
     ? q.done
       ? [`Quiz finished! Final score: ${q.score}/${q.total}`, "Close, then Shuffle and Start quiz to try again.", ""]
@@ -179,7 +223,35 @@ export default function Quiz() {
               ))}
             </div>
           </fieldset>
+          <fieldset className={s.group}>
+            <legend className={s.legend}>Deck</legend>
+            <div className={s.opts}>
+              <button type="button" className={`${s.opt} ${noRepeat ? s.on : ""}`} aria-pressed={noRepeat} onClick={toggleRepeat}>No repeats until all seen</button>
+            </div>
+          </fieldset>
+          <fieldset className={`${s.group} ${s.groupWide}`}>
+            <legend className={s.legend}>Category</legend>
+            <div className={s.opts}>
+              <button type="button" className={`${s.opt} ${cats.length === 0 ? s.on : ""}`} aria-pressed={cats.length === 0} onClick={() => toggleCat("all")}>All</button>
+              {CATS.map((c) => (
+                <button
+                  key={c} type="button" className={`${s.opt} ${s.catopt} ${cats.includes(c) ? s.on : ""}`}
+                  style={{ "--c": COLORS[c] }} aria-pressed={cats.includes(c)} onClick={() => toggleCat(c)}
+                >
+                  {c} ({COUNT_BY_CAT[c]})
+                </button>
+              ))}
+            </div>
+          </fieldset>
         </section>
+
+        <p className={s.status} aria-live="polite">
+          {noRepeat && bag
+            ? <span>Seen {seen} / {pool.length}{bag.length === 0 && !notice ? " — all seen!" : ""}</span>
+            : <span>{pool.length} elements in the pool</span>}
+          {notice && <strong className={s.notice}>{notice}</strong>}
+          {noRepeat && bag && <button type="button" className={s.reset} onClick={() => deal({ reset: true })}>Start over</button>}
+        </p>
 
         <div className={s.deck} aria-live="polite">
           {set.map((el, i) => {
@@ -247,5 +319,5 @@ export default function Quiz() {
       )}
     </>
   );
-                }
-        
+    }
+              
