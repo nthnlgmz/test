@@ -26,9 +26,18 @@ export default function Quiz() {
   const inputRef = useRef(null);
   const modalRef = useRef(null);
   const timer = useRef(null);
+  const shuffleSound = useRef(null);
 
   useEffect(() => { setSet(pick()); }, []);
   useEffect(() => () => clearTimeout(timer.current), []);
+
+  // preload the shuffle sound (file lives in /public/shuffle.mp3)
+  useEffect(() => {
+    const a = new Audio("/shuffle.mp3");
+    a.preload = "auto";
+    shuffleSound.current = a;
+    return () => { a.pause(); shuffleSound.current = null; };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -40,7 +49,14 @@ export default function Quiz() {
     if (open && q) (q.done ? modalRef : inputRef).current?.focus();
   }, [open, q?.cur, q?.done]);
 
-  const shuffle = () => { setSet(pick()); setShuffles((n) => n + 1); };
+  const playShuffle = () => {
+    const a = shuffleSound.current;
+    if (!a) return;
+    a.currentTime = 0;               // restart so rapid clicks still play
+    a.play().catch(() => {});        // ignore autoplay-block errors
+  };
+
+  const shuffle = () => { playShuffle(); setSet(pick()); setShuffles((n) => n + 1); };
 
   function start() {
     clearTimeout(timer.current);
@@ -157,4 +173,5 @@ export default function Quiz() {
       )}
     </>
   );
-}
+        }
+  
