@@ -108,3 +108,14 @@ footer{padding:0;font-size:12px;color:var(--mute);position:relative}
 .sl-ctl button:hover:not(:disabled){background:var(--red);border-color:var(--red)}
 .sl-ctl button:disabled{opacity:.35;cursor:default}
 .sl-ctl span{min-width:4.5em;text-align:center;font-size:13px;font-weight:500;color:#ffffffb8}
+
+/* full-screen review form */
+.modal{position:fixed;inset:0;z-index:100;display:flex;background:var(--dark);color:#fff;padding:calc(24px + env(safe-area-inset-top,0px)) 6vw calc(24px + env(safe-area-inset-bottom,0px));overflow-y:auto;overscroll-behavior:contain}
+.modal:focus{outline:none}
+.m-in{margin:auto;width:100%;max-width:560px}
+.m-x{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:5vw;width:48px;height:48px;border-radius:50%;border:1.5px solid #fff;background:none;color:#fff;font:500 22px/1 var(--font-outfit),system-ui,sans-serif;cursor:pointer}
+.m-x:hover{background:var(--red);border-color:var(--red)}
+.modal h2{font-size:clamp(28px,7vw,48px);margin:0 0 22px}
+.modal #revform{margin-top:0}
+.m-done p{margin:0 0 26px;color:#ffffffc8;font-size:16px;line-height:1.6;max-width:38ch}
+@media(prefers-reduced-motion:no-preference){.modal{animation:fade .25s both}}
