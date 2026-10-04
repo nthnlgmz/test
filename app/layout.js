@@ -18,6 +18,13 @@ export const metadata = {
   authors: [{ name: "Nathaniel Gomez" }],
   robots: { index: true, follow: true, "max-image-preview": "large" },
   alternates: { canonical: url },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-icon.png',
+  },
   openGraph: { type: "website", siteName: "Nathaniel Gomez", title, description, url, locale: "en_PH" },
   twitter: { card: "summary_large_image", title, description },
 };
