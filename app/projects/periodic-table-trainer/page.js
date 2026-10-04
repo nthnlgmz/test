@@ -17,6 +17,11 @@ export const metadata = {
   description,
   keywords: ["Periodic Table", "Chemistry Quiz", "Learn Elements", "Atomic Number", "Element Symbols", "Element Names", "Educational Game"],
   alternates: { canonical: path },
+  // Add the icons for this page:
+  icons: {
+    icon: '/projects/periodic-table-trainer/icon.png',
+    apple: '/projects/periodic-table-trainer/apple-icon.png',
+  },
   openGraph: { type: "website", siteName: "Nathaniel Gomez", title: ogTitle, description, url: path, locale: "en_PH" },
   twitter: { card: "summary_large_image", title: ogTitle, description },
 };
@@ -147,4 +152,4 @@ export default function Landing() {
     </div>
   );
               }
-              
+            
