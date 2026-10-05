@@ -12,9 +12,9 @@ const ext = { target: "_blank", rel: "noopener noreferrer" };
 const tools = ["C++", "Arduino", "ESP32", "PLC", "HTML", "CSS", "JavaScript", "Process control", "Occupational safety"];
 
 const projects = [
-  { title: "Anilao Diving & Photography", desc: "A diving website for a client, live and drawing more visitors.", chips: ["HTML", "CSS", "JS"], href: "https://www.anilaodivingandphotography.com/", go: "Visit site ↗", label: "Anilao Diving & Photography: visit site (opens in new tab)" },
   { title: "Fundy's Spread", desc: "A product website for a gourmet cheese palaman brand, with flavors, shop links and booth schedules.", chips: ["Next.js", "Supabase"], href: "https://fundys-spread.vercel.app/", go: "Visit site ↗", label: "Fundy's Spread: visit site (opens in new tab)" },
-  { title: "Periodic Table Quiz Trainer", desc: "An interactive quiz app that helps learners memorize the periodic table.", chips: ["HTML", "CSS", "JS"], href: "/projects/periodic-table-trainer", internal: true, go: "Try it →", label: "Periodic Table Quiz Trainer: try it" },
+  { title: "Anilao Diving & Photography", desc: "A diving website for a client, live and drawing more visitors.", chips: ["PHP", "Tailwind", "JS", "SQL"], href: "https://www.anilaodivingandphotography.com/", go: "Visit site ↗", label: "Anilao Diving & Photography: visit site (opens in new tab)" },
+  { title: "Periodic Table Quiz Trainer", desc: "An interactive quiz app that helps learners memorize the periodic table.", chips: ["Next.js"], href: "/projects/periodic-table-trainer", internal: true, go: "Try it →", label: "Periodic Table Quiz Trainer: try it" },
 ];
 
 const jobs = [
@@ -206,3 +206,4 @@ export default async function Home() {
   );
   }
 
+                
